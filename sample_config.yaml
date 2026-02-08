@@ -1,0 +1,35 @@
+input:
+  delimiter: ","
+  encoding: "utf-8"
+  header: true
+
+output:
+  format: "csv"
+  filename_pattern: "output.csv"
+
+schema:
+  target: "user"
+  fields:
+    - name: "full_name"
+      type: "string"
+      required: true
+    - name: "email"
+      type: "string"
+      required: true
+    - name: "age"
+      type: "number"
+      required: false
+
+llm:
+  provider: "openai"
+  model: "gpt-5-nano"
+  api_key: "YOUR_API_KEY_HERE" # Recommended: Use OPENAI_API_KEY environment variable instead
+  temperature: 0.3
+  max_tokens: 2000
+
+steps:
+  - type: "normalize_headers"
+  - type: "llm_transform"
+    settings:
+      prompt_template: "Extract full name, email and age from the provided data. Try to get age, if you not 100% sure about it, leave it null."
+  - type: "validate"

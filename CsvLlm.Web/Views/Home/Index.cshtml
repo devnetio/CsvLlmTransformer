@@ -1,0 +1,74 @@
+﻿@model CsvLlm.Web.Models.PipelineViewModel
+@{
+    ViewData["Title"] = "CSV LLM Transformer";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center mb-4">
+            <h1 class="display-4">CSV LLM Transformer</h1>
+            <p class="lead">Upload your CSV and transform it using LLM based on your configuration.</p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <form asp-action="Run" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>YAML Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea asp-for="YamlConfig" class="form-control" rows="20" style="font-family: monospace;"></textarea>
+                        <span asp-validation-for="YamlConfig" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Execution Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="InputFile" class="form-label"></label>
+                            <input asp-for="InputFile" class="form-control" type="file" accept=".csv" />
+                            <span asp-validation-for="InputFile" class="text-danger"></span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Run Pipeline</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Instructions</h5>
+                    </div>
+                    <div class="card-body">
+                        <small class="text-muted">
+                            <ol>
+                                <li>Edit the YAML configuration to define your schema and steps.</li>
+                                <li>Select a CSV file to process.</li>
+                                <li>Click "Run Pipeline".</li>
+                                <li>Wait for processing to complete.</li>
+                                <li>Download the results in a ZIP file.</li>
+                            </ol>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
