@@ -102,6 +102,8 @@ public sealed class OpenAiClient : ILlmClient
         - Respond ONLY with valid JSON
         - Do NOT include explanations, comments, or markdown
         - The JSON MUST match the output format exactly
+        - Each input row can result in zero, one, or multiple output rows in the "results" array.
+        - Use the corresponding "row_id" for each output row generated from an input row.
 
         Target schema fields:
         {{schemaFields}}

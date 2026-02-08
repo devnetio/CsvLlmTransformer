@@ -33,16 +33,28 @@ public sealed class LlmTransformStep : IPipelineStep
 
         var result = await _llmClient.TransformAsync(request, context.LlmConfig, cancellationToken);
 
+        var newRows = new List<RowData>();
+
         foreach (var rowResult in result.Rows)
         {
-            var row = context._rows.Find(r => r.Id == rowResult.RowId);
-            if (row != null)
+            var originalRow = context._rows.FirstOrDefault(r => r.Id == rowResult.RowId);
+            
+            var newRow = new RowData
             {
-                foreach (var kvp in rowResult.Values)
-                {
-                    row.Values[kvp.Key] = kvp.Value;
-                }
+                // If we found the original row, we could copy some state if needed, 
+                // but usually LLM transform is a fresh start for values.
+                State = Model.Enum.RowState.Transformed
+            };
+
+            foreach (var kvp in rowResult.Values)
+            {
+                newRow.Values[kvp.Key] = kvp.Value;
             }
+
+            newRows.Add(newRow);
         }
+
+        context._rows.Clear();
+        context._rows.AddRange(newRows);
     }
 }
